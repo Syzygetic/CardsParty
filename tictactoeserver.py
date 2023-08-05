@@ -48,6 +48,10 @@ def handle_client(client_socket, client_address):
     # Send player symbol to the client
     client_socket.send(f"You are Player {player_id + 1} ({player_symbol})".encode('utf-8'))
 
+    # Notify the client about the other player if both players have connected
+    if len(clients) == max_clients:
+        client_socket.send("\n\nThe other player is making a move. Please wait ...".encode('utf-8'))
+
     while True:
         try:
             # Wait for the player's turn
@@ -80,6 +84,9 @@ def handle_client(client_socket, client_address):
 
                     # Switch to the next player
                     current_player = (current_player + 1) % len(clients)
+
+                    # Notify the other player about the current player's move
+                    client_socket.send("\n\nThe other player is making a move. Please wait ...".encode('utf-8'))
                 else:
                     client_socket.send("Invalid move. Try again.".encode('utf-8'))
         except:
